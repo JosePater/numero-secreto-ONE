@@ -8,32 +8,44 @@ let listaNumerosSorteados = [];
 let inputMax = document.getElementById('valorUsuario');
 inputMax.max = numMax;
 
-iniciarJuego();
-
 numUsuario = inputMax.value;
 
-function asignarTextoElemento(elemento, texto, val) {
+iniciarJuego();
+
+function asignarTextoElemento(elemento, texto) {
   let elementoHTML = document.querySelector(elemento);
   elementoHTML.innerHTML = texto;
 }
 
 function intentoUsuario() {
-  let numeroUsuario = parseInt(document.getElementById('valorUsuario').value);
+  let numeroUsuario = parseInt(inputMax.value);
 
-  if (numeroUsuario === numeroSecreto) {
-    asignarTextoElemento('p',`Adivinaste en ${intentos} ${intentos > 1 ? 'intentos' : 'intento'}`);
-    // Habilitar botón nuevo juego
-    document.getElementById('reiniciar').removeAttribute('disabled');
+  if (isNaN(numeroUsuario)) {
+    asignarTextoElemento('p', `Digita un número del 1 al ${numMax}`);
+    document.querySelector('p').style.backgroundColor = 'red'; // bg rojo
+
   } else {
-    // Cuando el usuario no acierta
-    if (numeroSecreto > numeroUsuario) {
-      asignarTextoElemento('p', 'El número secreto es mayor');
+    document.querySelector('p').style.backgroundColor = ''; // sin bg
+
+    if (numeroUsuario === numeroSecreto) {
+      asignarTextoElemento('p',`¡Adivinaste en ${intentos} ${intentos > 1 ? 'intentos' : 'solo intento'}!`);
+      // Habilitar botón nuevo juego
+      document.getElementById('reiniciar').removeAttribute('disabled');
+      document.getElementById('intentar').setAttribute('disabled', true);
+      inputMax.setAttribute('disabled', true);
+      document.querySelector('p').style.backgroundColor = 'green'; // bg verde
     } else {
-      asignarTextoElemento('p', 'El número secreto es menor');
+      // Cuando el usuario no acierta
+      if (numeroSecreto > numeroUsuario) {
+        asignarTextoElemento('p', 'El número secreto es mayor');
+      } else {
+        asignarTextoElemento('p', 'El número secreto es menor');
+      }
+      intentos++;
+      limpiarCaja();
     }
-    intentos++;
-    limpiarCaja();
   }
+  inputMax.focus();
 }
 
 function generarNumeroSecreto() {
@@ -64,6 +76,9 @@ function iniciarJuego() {
   asignarTextoElemento('h1', 'Juego de número secreto');
   asignarTextoElemento('p', `Digita un número del 1 al ${numMax}`);
   numeroSecreto = generarNumeroSecreto();
-  // Desactivar botón nuevo juego
-  document.querySelector('#reiniciar').setAttribute('disabled', true);
-}
+  document.querySelector('p').style.backgroundColor = ''; // sin bg 
+  document.getElementById('intentar').removeAttribute('disabled');     // Activado
+  document.querySelector('#reiniciar').setAttribute('disabled', true); // Desactivado
+  inputMax.removeAttribute('disabled'); // Activado
+  inputMax.focus();
+  }
